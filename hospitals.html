@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanjeevani – Nearby Hospitals</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#1a6b4a;--green-light:#2d9b6f;--cream:#fdf8f0;--red:#d63031;--blue:#2980b9;--text:#1a1a2e;--muted:#6b7280}
+body{font-family:"DM Sans",sans-serif;background:var(--cream);min-height:100vh}
+header{background:white;padding:1.2rem 1.5rem;display:flex;align-items:center;gap:1rem;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.back{font-size:1.3rem;text-decoration:none;color:var(--text)}
+.logo{font-family:"Playfair Display",serif;font-size:1.4rem;color:var(--blue)}
+.main{padding:1.5rem;max-width:480px;margin:0 auto}
+.page-title{font-size:1.5rem;font-weight:500;color:var(--text);margin-bottom:.3rem}
+.subtitle{font-size:.85rem;color:var(--muted);margin-bottom:1.2rem}
+
+/* LOCATION BAR */
+.location-bar{background:white;border-radius:14px;padding:1rem 1.2rem;box-shadow:0 4px 16px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem}
+.location-info{display:flex;align-items:center;gap:.6rem}
+.location-icon{font-size:1.3rem}
+.location-text{font-size:.85rem;color:var(--text)}
+.location-sub{font-size:.75rem;color:var(--muted)}
+.locate-btn{padding:.5rem 1rem;background:linear-gradient(135deg,var(--blue),#3498db);color:white;border:none;border-radius:10px;font-size:.82rem;font-weight:500;font-family:"DM Sans",sans-serif;cursor:pointer;white-space:nowrap}
+.locate-btn:disabled{opacity:.6;cursor:not-allowed}
+
+/* EMERGENCY STRIP */
+.emergency-strip{background:linear-gradient(135deg,var(--red),#c0392b);border-radius:14px;padding:1rem 1.2rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;color:white}
+.strip-text h3{font-size:.92rem;font-weight:600;margin-bottom:.2rem}
+.strip-text p{font-size:.78rem;opacity:.9}
+.call-108{background:white;color:var(--red);border:none;border-radius:10px;padding:.5rem 1rem;font-weight:700;font-size:.9rem;font-family:"DM Sans",sans-serif;cursor:pointer;text-decoration:none;display:inline-block}
+
+/* FILTER TABS */
+.filter-tabs{display:flex;gap:.5rem;margin-bottom:1rem;overflow-x:auto;padding-bottom:.3rem}
+.filter-tab{padding:.4rem .9rem;border-radius:50px;border:1.5px solid #e5e7eb;background:white;font-size:.8rem;cursor:pointer;white-space:nowrap;font-family:"DM Sans",sans-serif;transition:all .2s}
+.filter-tab.active{background:var(--blue);color:white;border-color:var(--blue)}
+
+/* HOSPITAL CARDS */
+#hospital-list{}
+.hospital-card{background:white;border-radius:16px;padding:1.2rem;box-shadow:0 4px 16px rgba(0,0,0,.06);margin-bottom:.9rem;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.hosp-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem}
+.hosp-name{font-size:.95rem;font-weight:600;color:var(--text);flex:1;margin-right:.5rem}
+.dist-badge{background:#eff6ff;color:var(--blue);font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:50px;white-space:nowrap}
+.hosp-address{font-size:.78rem;color:var(--muted);margin-bottom:.5rem}
+.hosp-type-badge{display:inline-block;font-size:.72rem;padding:.2rem .6rem;border-radius:6px;margin-bottom:.7rem;font-weight:500}
+.type-multi{background:#fef9c3;color:#713f12}
+.type-super{background:#f0fdf4;color:#14532d}
+.type-govt{background:#eff6ff;color:#1e40af}
+.hosp-actions{display:flex;gap:.6rem}
+.action-btn{flex:1;padding:.55rem;border:none;border-radius:10px;font-size:.78rem;font-weight:500;font-family:"DM Sans",sans-serif;cursor:pointer;text-decoration:none;text-align:center;transition:transform .15s}
+.action-btn:hover{transform:scale(1.02)}
+.btn-map{background:#eff6ff;color:var(--blue)}
+.btn-call{background:#fee2e2;color:var(--red)}
+.btn-amb{background:linear-gradient(135deg,var(--red),#c0392b);color:white}
+
+/* LOADING / EMPTY */
+.loading-state{text-align:center;padding:2rem;color:var(--muted)}
+.spinner{display:inline-block;width:24px;height:24px;border:3px solid #e5e7eb;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:.5rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:.8rem;box-shadow:0 -4px 16px rgba(0,0,0,.08)}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;font-size:.7rem;color:var(--muted);text-decoration:none}
+.nav-item.active{color:var(--blue)}
+.nav-icon{font-size:1.3rem}
+</style>
+</head>
+<body>
+<header>
+  <a href="/home" class="back">&larr;</a>
+  <div class="logo">Nearby Hospitals</div>
+</header>
+
+<div class="main">
+  <div class="page-title">Find Care Near You 🏥</div>
+  <div class="subtitle">Hospitals sorted by distance from your location.</div>
+
+  <!-- LOCATION BAR -->
+  <div class="location-bar">
+    <div class="location-info">
+      <span class="location-icon">📍</span>
+      <div>
+        <div class="location-text" id="location-text">Location not detected</div>
+        <div class="location-sub" id="location-sub">Using default Chennai data</div>
+      </div>
+    </div>
+    <button class="locate-btn" onclick="getLocation()" id="locateBtn">📡 Detect</button>
+  </div>
+
+  <!-- EMERGENCY STRIP -->
+  <div class="emergency-strip">
+    <div class="strip-text">
+      <h3>🚑 Need an Ambulance?</h3>
+      <p>Call 108 for free emergency transport</p>
+    </div>
+    <a href="tel:108" class="call-108">Call 108</a>
+  </div>
+
+  <!-- FILTER TABS -->
+  <div class="filter-tabs">
+    <button class="filter-tab active" onclick="filterHospitals('all', this)">All</button>
+    <button class="filter-tab" onclick="filterHospitals('Super Specialty', this)">Super Specialty</button>
+    <button class="filter-tab" onclick="filterHospitals('Multi-Specialty', this)">Multi-Specialty</button>
+    <button class="filter-tab" onclick="filterHospitals('Government', this)">Government</button>
+  </div>
+
+  <!-- HOSPITAL LIST -->
+  <div id="hospital-list">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div>Loading hospitals...</div>
+    </div>
+  </div>
+</div>
+
+<div style="height:80px"></div>
+<nav class="bottom-nav">
+  <a href="/home" class="nav-item"><span class="nav-icon">🏠</span>Home</a>
+  <a href="/symptom-checker" class="nav-item"><span class="nav-icon">🩺</span>Symptoms</a>
+  <a href="/wellness" class="nav-item"><span class="nav-icon">🧠</span>Wellness</a>
+  <a href="/hospitals" class="nav-item active"><span class="nav-icon">🏥</span>Hospitals</a>
+</nav>
+
+<script>
+    
+var allHospitals = [];
+var currentFilter = "all";
+
+// Load with default mock data on page load
+window.onload = function() { fetchHospitals(null, null); };
+
+function getLocation() {
+  var btn = document.getElementById("locateBtn");
+  btn.disabled = true;
+  btn.textContent = "Detecting...";
+  if (!navigator.geolocation) {
+    document.getElementById("location-sub").textContent = "Geolocation not supported. Using default data.";
+    btn.disabled = false; btn.textContent = "📡 Detect";
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      var lat = pos.coords.latitude;
+      var lng = pos.coords.longitude;
+      document.getElementById("location-text").textContent = lat.toFixed(4) + ", " + lng.toFixed(4);
+      document.getElementById("location-sub").textContent = "Live GPS location detected ✓";
+      btn.textContent = "✓ Located";
+      fetchHospitals(lat, lng);
+    },
+    function() {
+      document.getElementById("location-sub").textContent = "Permission denied. Using default data.";
+      btn.disabled = false; btn.textContent = "📡 Retry";
+      fetchHospitals(null, null);
+    }
+  );
+}
+
+async function fetchHospitals(lat, lng) {
+  try {
+    var res = await fetch("/api/nearby-hospitals", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({lat: lat, lng: lng})
+    });
+    var data = await res.json();
+    allHospitals = data.hospitals;
+    if (data.location_used) {
+      document.getElementById("location-sub").textContent = "Distances calculated from your GPS location ✓";
+    }
+    renderHospitals(allHospitals);
+  } catch(e) {
+    document.getElementById("hospital-list").innerHTML = "<div class='loading-state'>Failed to load. Please try again.</div>";
+  }
+}
+
+function filterHospitals(type, el) {
+  currentFilter = type;
+  document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
+  el.classList.add("active");
+  var filtered = type === "all" ? allHospitals : allHospitals.filter(h => h.type === type);
+  renderHospitals(filtered);
+}
+
+function getTypeClass(type) {
+  if (type === "Super Specialty") return "type-super";
+  if (type === "Government") return "type-govt";
+  return "type-multi";
+}
+
+function renderHospitals(list) {
+  var container = document.getElementById("hospital-list");
+  if (!list.length) {
+    container.innerHTML = "<div class='loading-state'>No hospitals found for this filter.</div>";
+    return;
+  }
+  container.innerHTML = list.map(function(h) {
+    var mapUrl = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(h.name + " " + h.address);
+    return "<div class='hospital-card'>" +
+      "<div class='hosp-header'>" +
+        "<div class='hosp-name'>" + h.name + "</div>" +
+        "<span class='dist-badge'>" + h.distance + " km</span>" +
+      "</div>" +
+      "<div class='hosp-address'>📍 " + h.address + "</div>" +
+      "<span class='hosp-type-badge " + getTypeClass(h.type) + "'>" + h.type + "</span>" +
+      "<div class='hosp-actions'>" +
+        "<a href='" + mapUrl + "' target='_blank' class='action-btn btn-map'>🗺️ Navigate</a>" +
+        "<a href='tel:" + h.phone.replace(/-/g,"") + "' class='action-btn btn-call'>📞 Call</a>" +
+        "<a href='tel:108' class='action-btn btn-amb'>🚑 108</a>" +
+      "</div>" +
+    "</div>";
+  }).join("");
+}
+    
+  </script>
+</body>
+</html>

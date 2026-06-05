@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanjeevani – Health Log</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#1a6b4a;--gl:#2d9b6f;--cream:#fdf8f0;--red:#d63031;--text:#1a1a2e;--muted:#6b7280;--blue:#2980b9;--purple:#6c63ff}
+body{font-family:"DM Sans",sans-serif;background:var(--cream);min-height:100vh}
+header{background:white;padding:1.2rem 1.5rem;display:flex;align-items:center;gap:1rem;box-shadow:0 2px 12px rgba(0,0,0,.06);position:sticky;top:0;z-index:10}
+.back{font-size:1.3rem;text-decoration:none;color:var(--text)}
+.logo{font-family:"Playfair Display",serif;font-size:1.4rem;color:var(--green)}
+.main{padding:1.5rem;max-width:480px;margin:0 auto}
+.page-title{font-size:1.5rem;font-weight:500;color:var(--text);margin-bottom:.3rem}
+.subtitle{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}
+
+/* Tabs */
+.tabs{display:flex;gap:.4rem;margin-bottom:1.4rem;background:white;border-radius:14px;padding:.4rem;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.tab{flex:1;padding:.55rem;border:none;border-radius:10px;font-size:.82rem;font-weight:500;font-family:"DM Sans",sans-serif;cursor:pointer;background:transparent;color:var(--muted);transition:all .2s}
+.tab.active{background:var(--green);color:white;box-shadow:0 3px 10px rgba(26,107,74,.3)}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:1.3rem}
+.stat-card{background:white;border-radius:14px;padding:1rem;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.stat-num{font-size:1.8rem;font-weight:700;color:var(--green);line-height:1}
+.stat-lbl{font-size:.72rem;color:var(--muted);margin-top:.3rem}
+
+/* Log entry cards */
+.log-section{margin-bottom:1.3rem}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem}
+.section-title{font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.clear-btn{font-size:.72rem;color:var(--red);background:none;border:none;cursor:pointer;font-family:"DM Sans",sans-serif}
+
+.log-card{background:white;border-radius:14px;padding:1rem 1.2rem;margin-bottom:.7rem;box-shadow:0 3px 12px rgba(0,0,0,.05);display:flex;align-items:flex-start;gap:.9rem;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.log-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.icon-symptom{background:#f0fdf4}
+.icon-wellness{background:#fdf4ff}
+.icon-emergency{background:#fee2e2}
+.log-body{flex:1}
+.log-title{font-size:.88rem;font-weight:500;color:var(--text);margin-bottom:.2rem}
+.log-sub{font-size:.75rem;color:var(--muted)}
+.log-badge{display:inline-block;padding:.18rem .55rem;border-radius:50px;font-size:.7rem;font-weight:600;margin-top:.3rem}
+.badge-low{background:#d1fae5;color:#065f46}
+.badge-medium{background:#fef3c7;color:#92400e}
+.badge-high{background:#ffedd5;color:#9a3412}
+.badge-emergency{background:#fee2e2;color:#991b1b}
+.badge-wellness{background:#ede9fe;color:#5b21b6}
+.log-time{font-size:.7rem;color:var(--muted);white-space:nowrap;margin-left:auto;padding-left:.5rem}
+
+.empty-state{text-align:center;padding:2.5rem 1rem;color:var(--muted)}
+.empty-icon{font-size:3rem;margin-bottom:.8rem;opacity:.4}
+.empty-text{font-size:.9rem}
+
+.loading-state{text-align:center;padding:2rem;color:var(--muted)}
+.spinner{display:inline-block;width:22px;height:22px;border:2px solid #e5e7eb;border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Add log button */
+.add-btn{position:fixed;bottom:80px;right:20px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--gl));color:white;border:none;font-size:1.5rem;cursor:pointer;box-shadow:0 6px 20px rgba(26,107,74,.4);z-index:9;transition:transform .2s}
+.add-btn:hover{transform:scale(1.08)}
+
+/* Quick add modal */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:20;display:none;align-items:flex-end}
+.overlay.show{display:flex}
+.modal{background:white;border-radius:24px 24px 0 0;padding:1.5rem;width:100%;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-title{font-size:1.1rem;font-weight:600;color:var(--text);margin-bottom:1rem}
+.input-group{margin-bottom:1rem}
+.input-group label{font-size:.8rem;color:var(--muted);display:block;margin-bottom:.4rem}
+.input-group input,.input-group select,.input-group textarea{width:100%;padding:.8rem;border:1.5px solid #e5e7eb;border-radius:10px;font-size:.88rem;font-family:"DM Sans",sans-serif;outline:none;transition:border .2s}
+.input-group input:focus,.input-group select:focus,.input-group textarea:focus{border-color:var(--green)}
+.modal-btns{display:flex;gap:.6rem}
+.modal-save{flex:1;padding:.8rem;background:linear-gradient(135deg,var(--green),var(--gl));color:white;border:none;border-radius:10px;font-size:.9rem;font-weight:500;font-family:"DM Sans",sans-serif;cursor:pointer}
+.modal-cancel{padding:.8rem 1.2rem;background:#f3f4f6;color:var(--text);border:none;border-radius:10px;font-size:.9rem;font-family:"DM Sans",sans-serif;cursor:pointer}
+
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:.8rem;box-shadow:0 -4px 16px rgba(0,0,0,.08)}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;font-size:.7rem;color:var(--muted);text-decoration:none}
+.nav-item.active{color:var(--green)}
+.nav-icon{font-size:1.3rem}
+</style>
+</head>
+<body>
+<header>
+  <a href="/home" class="back">&larr;</a>
+  <div class="logo">Health Log 📋</div>
+</header>
+
+<div class="main">
+  <div class="page-title">Your Health History 📋</div>
+  <div class="subtitle">All your symptom checks and wellness sessions in one place.</div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('all',this)">All</button>
+    <button class="tab" onclick="switchTab('symptoms',this)">Symptoms</button>
+    <button class="tab" onclick="switchTab('wellness',this)">Wellness</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num" id="statSymptoms">-</div>
+      <div class="stat-lbl">Symptom Checks</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statWellness">-</div>
+      <div class="stat-lbl">Wellness Sessions</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statEmergency">-</div>
+      <div class="stat-lbl">Alerts Triggered</div>
+    </div>
+  </div>
+
+  <!-- Log list -->
+  <div class="log-section">
+    <div class="section-header">
+      <div class="section-title" id="logSectionTitle">Recent Activity</div>
+    </div>
+    <div id="logList">
+      <div class="loading-state"><div class="spinner"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Add FAB -->
+<button class="add-btn" onclick="openModal()">+</button>
+
+<!-- Quick Add Modal -->
+<div class="overlay" id="overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-title">➕ Quick Add Log Entry</div>
+    <div class="input-group">
+      <label>Entry Type</label>
+      <select id="entryType" onchange="toggleFields()">
+        <option value="symptom">🩺 Symptom Check</option>
+        <option value="wellness">🧠 Wellness Note</option>
+        <option value="medication">💊 Medication</option>
+        <option value="vitals">❤️ Vitals</option>
+      </select>
+    </div>
+    <div class="input-group" id="symptomsField">
+      <label>Symptoms</label>
+      <input type="text" id="symptomText" placeholder="e.g. mild headache">
+    </div>
+    <div class="input-group" id="notesField" style="display:none">
+      <label>Notes</label>
+      <input type="text" id="noteText" placeholder="e.g. completed breathing exercise">
+    </div>
+    <div class="input-group">
+      <label>How are you feeling? (1–10)</label>
+      <input type="range" id="feelingScore" min="1" max="10" value="7" oninput="document.getElementById('scoreDisplay').textContent=this.value">
+      <div style="text-align:center;font-size:.85rem;color:var(--green);margin-top:.3rem">Score: <span id="scoreDisplay">7</span>/10</div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="document.getElementById('overlay').classList.remove('show')">Cancel</button>
+      <button class="modal-save" onclick="saveEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<div style="height:80px"></div>
+<nav class="bottom-nav">
+  <a href="/home" class="nav-item"><span class="nav-icon">🏠</span>Home</a>
+  <a href="/symptom-checker" class="nav-item"><span class="nav-icon">🩺</span>Symptoms</a>
+  <a href="/wellness" class="nav-item"><span class="nav-icon">🧠</span>Wellness</a>
+  <a href="/health-log" class="nav-item active"><span class="nav-icon">📋</span>Log</a>
+</nav>
+
+<script>
+var currentTab = 'all';
+var allLogs = [];
+
+window.onload = function() { loadLogs(); };
+
+async function loadLogs() {
+  try {
+    var res = await fetch('/api/health-log');
+    var data = await res.json();
+    allLogs = data.logs || [];
+    updateStats(data.stats || {});
+    renderLogs(allLogs);
+  } catch(e) {
+    // If API not ready, show mock data for demo
+    allLogs = getMockLogs();
+    updateStats({symptoms: allLogs.filter(l=>l.type==='symptom').length,
+                 wellness: allLogs.filter(l=>l.type==='wellness').length,
+                 emergency: allLogs.filter(l=>l.badge==='emergency').length});
+    renderLogs(allLogs);
+  }
+}
+
+function getMockLogs() {
+  var now = new Date();
+  return [
+    {type:'symptom', title:'Headache', sub:'Specialty: Neurology', badge:'low', time: formatTime(new Date(now-1000*60*30))},
+    {type:'wellness', title:'Breathing Exercise', sub:'4-7-8 cycle completed (3 rounds)', badge:'wellness', time: formatTime(new Date(now-1000*60*90))},
+    {type:'symptom', title:'Chest pain', sub:'Specialty: Cardiology', badge:'emergency', time: formatTime(new Date(now-1000*60*60*3))},
+    {type:'symptom', title:'Fever and cough', sub:'Specialty: General Medicine', badge:'medium', time: formatTime(new Date(now-1000*60*60*5))},
+    {type:'wellness', title:'Mood Check — Anxious', sub:'Empathetic response received', badge:'wellness', time: formatTime(new Date(now-1000*60*60*8))},
+    {type:'symptom', title:'Joint pain', sub:'Specialty: Orthopedics', badge:'low', time: formatTime(new Date(now-1000*60*60*24))},
+  ];
+}
+
+function formatTime(d) {
+  var now = new Date();
+  var diff = Math.floor((now - d) / 1000);
+  if (diff < 60) return 'Just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return d.toLocaleDateString('en-IN', {day:'numeric', month:'short'});
+}
+
+function updateStats(stats) {
+  document.getElementById('statSymptoms').textContent = stats.symptoms || 0;
+  document.getElementById('statWellness').textContent = stats.wellness || 0;
+  document.getElementById('statEmergency').textContent = stats.emergency || 0;
+}
+
+function switchTab(tab, el) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  var filtered = tab === 'all' ? allLogs
+    : tab === 'symptoms' ? allLogs.filter(l => l.type === 'symptom')
+    : allLogs.filter(l => l.type === 'wellness');
+  document.getElementById('logSectionTitle').textContent =
+    tab === 'all' ? 'Recent Activity' : tab === 'symptoms' ? 'Symptom Checks' : 'Wellness Sessions';
+  renderLogs(filtered);
+}
+
+function renderLogs(logs) {
+  var container = document.getElementById('logList');
+  if (!logs.length) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">No entries yet. Start by checking your symptoms!</div></div>';
+    return;
+  }
+  container.innerHTML = logs.map(log => {
+    var icon = log.type === 'symptom' ? '🩺' : log.type === 'wellness' ? '🧠' : '💊';
+    var iconClass = log.type === 'symptom' ? 'icon-symptom' : log.type === 'wellness' ? 'icon-wellness' : 'icon-emergency';
+    var badgeText = {low:'LOW',medium:'MEDIUM',high:'HIGH',emergency:'EMERGENCY',wellness:'WELLNESS'}[log.badge] || '';
+    return '<div class="log-card">'
+      + '<div class="log-icon ' + iconClass + '">' + icon + '</div>'
+      + '<div class="log-body">'
+      + '<div class="log-title">' + log.title + '</div>'
+      + '<div class="log-sub">' + log.sub + '</div>'
+      + (badgeText ? '<span class="log-badge badge-' + log.badge + '">' + badgeText + '</span>' : '')
+      + '</div>'
+      + '<div class="log-time">' + log.time + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function openModal() {
+  document.getElementById('overlay').classList.add('show');
+}
+
+function closeModal(e) {
+  if (e.target.id === 'overlay') document.getElementById('overlay').classList.remove('show');
+}
+
+function toggleFields() {
+  var type = document.getElementById('entryType').value;
+  document.getElementById('symptomsField').style.display = type === 'symptom' ? 'block' : 'none';
+  document.getElementById('notesField').style.display    = type !== 'symptom' ? 'block' : 'none';
+}
+
+async function saveEntry() {
+  var type  = document.getElementById('entryType').value;
+  var text  = document.getElementById('symptomText').value || document.getElementById('noteText').value || 'Manual entry';
+  var score = document.getElementById('feelingScore').value;
+
+  var newLog = {
+    type: type === 'symptom' ? 'symptom' : 'wellness',
+    title: type === 'symptom' ? (text || 'Symptom check') : (type === 'wellness' ? 'Wellness note' : type.charAt(0).toUpperCase()+type.slice(1)),
+    sub: type === 'symptom' ? 'Manual entry — Feeling: ' + score + '/10' : text || 'Note added',
+    badge: type === 'symptom' ? 'low' : 'wellness',
+    time: 'Just now'
+  };
+
+  allLogs.unshift(newLog);
+  try {
+    await fetch('/api/health-log', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({type, text, score})
+    });
+  } catch(e) {}
+
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('symptomText').value = '';
+  document.getElementById('noteText').value = '';
+  document.getElementById('feelingScore').value = 7;
+  document.getElementById('scoreDisplay').textContent = '7';
+  renderLogs(allLogs);
+
+  // Update stats
+  var sCount = allLogs.filter(l=>l.type==='symptom').length;
+  var wCount = allLogs.filter(l=>l.type==='wellness').length;
+  var eCount = allLogs.filter(l=>l.badge==='emergency').length;
+  updateStats({symptoms:sCount,wellness:wCount,emergency:eCount});
+}
+</script>
+</body>
+</html>

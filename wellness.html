@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanjeevani – Wellness</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1a6b4a;--green-light:#2d9b6f;--cream:#fdf8f0;
+  --red:#d63031;--text:#1a1a2e;--muted:#6b7280;
+  --purple:#6c63ff;--blue:#2980b9;
+}
+body{font-family:"DM Sans",sans-serif;background:var(--cream);min-height:100vh}
+header{background:white;padding:1.2rem 1.5rem;display:flex;align-items:center;gap:1rem;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.back{font-size:1.3rem;text-decoration:none;color:var(--text)}
+.logo{font-family:"Playfair Display",serif;font-size:1.4rem;color:var(--purple)}
+.main{padding:1.5rem;max-width:480px;margin:0 auto}
+.page-title{font-size:1.5rem;font-weight:500;color:var(--text);margin-bottom:.3rem}
+.subtitle{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}
+
+/* MOOD CHECK */
+.section-card{background:white;border-radius:18px;padding:1.4rem;box-shadow:0 4px 20px rgba(0,0,0,.07);margin-bottom:1.3rem}
+.section-label{font-size:.78rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.8rem}
+.mood-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1rem}
+.mood-btn{padding:.6rem .3rem;border-radius:12px;border:1.5px solid #e5e7eb;background:white;font-size:.82rem;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.mood-btn:hover,.mood-btn.active{background:var(--purple);color:white;border-color:var(--purple)}
+.mood-emoji{font-size:1.4rem}
+textarea.mood-input{width:100%;min-height:80px;padding:.9rem;border:1.5px solid #e5e7eb;border-radius:12px;font-size:.88rem;font-family:"DM Sans",sans-serif;resize:none;outline:none;transition:border .2s;margin-bottom:.8rem}
+textarea.mood-input:focus{border-color:var(--purple)}
+.submit-btn{width:100%;padding:.9rem;border:none;border-radius:12px;font-size:.95rem;font-weight:500;font-family:"DM Sans",sans-serif;cursor:pointer;transition:transform .2s;color:white}
+.btn-purple{background:linear-gradient(135deg,var(--purple),#8b84ff);box-shadow:0 6px 20px rgba(108,99,255,.3)}
+.btn-green{background:linear-gradient(135deg,var(--green),var(--green-light));box-shadow:0 6px 20px rgba(26,107,74,.3)}
+.submit-btn:hover{transform:translateY(-2px)}
+
+/* RESPONSE CARD */
+#response-area{display:none;margin-bottom:1.3rem}
+.response-card{background:linear-gradient(135deg,#f3f0ff,#ede9fe);border-radius:18px;padding:1.4rem;border-left:4px solid var(--purple);animation:slideIn .4s ease}
+.response-card p{font-size:.92rem;line-height:1.7;color:var(--text)}
+.crisis-card{background:linear-gradient(135deg,#fee2e2,#fecaca);border-radius:18px;padding:1.4rem;border-left:4px solid var(--red);animation:slideIn .4s ease;margin-top:.8rem}
+.crisis-card h3{font-size:.95rem;font-weight:600;color:var(--red);margin-bottom:.5rem}
+.crisis-card p{font-size:.85rem;line-height:1.6;color:#7f1d1d;margin-bottom:.8rem}
+.helpline-row{display:flex;flex-direction:column;gap:.4rem}
+.helpline-link{display:flex;align-items:center;justify-content:space-between;background:white;border-radius:10px;padding:.6rem .9rem;text-decoration:none;color:var(--text);font-size:.85rem;font-weight:500}
+.helpline-link span{color:var(--red);font-weight:600}
+@keyframes slideIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+
+/* BREATHING EXERCISE */
+.breathing-section{text-align:center}
+.breath-circle-wrap{display:flex;justify-content:center;margin:1.2rem 0}
+.breath-circle{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green-light));display:flex;align-items:center;justify-content:center;flex-direction:column;box-shadow:0 8px 30px rgba(26,107,74,.3);cursor:pointer;transition:transform .3s;position:relative}
+.breath-circle::before{content:"";position:absolute;inset:-8px;border-radius:50%;border:3px solid rgba(26,107,74,.2);animation:none}
+.breath-circle.breathing::before{animation:breathRing 4s ease-in-out infinite}
+@keyframes breathRing{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.15);opacity:1}}
+.breath-circle.inhale{animation:expand 4s ease-in-out forwards}
+.breath-circle.hold{animation:none}
+.breath-circle.exhale{animation:shrink 8s ease-in-out forwards}
+@keyframes expand{0%{transform:scale(1)}100%{transform:scale(1.2)}}
+@keyframes shrink{0%{transform:scale(1.2)}100%{transform:scale(1)}}
+.breath-label{font-size:1rem;font-weight:500;color:white}
+.breath-count{font-size:2rem;font-weight:700;color:white;line-height:1}
+.breath-instruction{font-size:.85rem;color:var(--muted);margin-bottom:1rem}
+.breath-steps{display:flex;justify-content:center;gap:1.5rem;margin-bottom:1.2rem}
+.breath-step{text-align:center}
+.step-num{font-size:1.2rem;font-weight:700;color:var(--green)}
+.step-lbl{font-size:.72rem;color:var(--muted)}
+#breath-status{font-size:.9rem;color:var(--green);font-weight:500;min-height:1.4rem;margin-bottom:.8rem}
+#done-msg{display:none;background:#d1fae5;color:#065f46;border-radius:12px;padding:.9rem;font-size:.88rem;text-align:center;margin-top:.8rem}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:.8rem;box-shadow:0 -4px 16px rgba(0,0,0,.08)}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;font-size:.7rem;color:var(--muted);text-decoration:none}
+.nav-item.active{color:var(--purple)}
+.nav-icon{font-size:1.3rem}
+</style>
+</head>
+<body>
+<header>
+  <a href="/home" class="back">&larr;</a>
+  <div class="logo">Mental Wellness</div>
+</header>
+
+<div class="main">
+  <div class="page-title">How's your mind today? 🧠</div>
+  <div class="subtitle">Share how you're feeling — we're here to listen.</div>
+
+  <!-- MOOD CHECK + EMPATHETIC RESPONSE -->
+  <div class="section-card">
+    <div class="section-label">How are you feeling?</div>
+    <div class="mood-grid">
+      <button class="mood-btn" onclick="selectMood(this,'anxious')"><span class="mood-emoji">😰</span>Anxious</button>
+      <button class="mood-btn" onclick="selectMood(this,'sad')"><span class="mood-emoji">😢</span>Sad</button>
+      <button class="mood-btn" onclick="selectMood(this,'stressed')"><span class="mood-emoji">😤</span>Stressed</button>
+      <button class="mood-btn" onclick="selectMood(this,'lonely')"><span class="mood-emoji">😔</span>Lonely</button>
+      <button class="mood-btn" onclick="selectMood(this,'scared')"><span class="mood-emoji">😨</span>Scared</button>
+      <button class="mood-btn" onclick="selectMood(this,'okay')"><span class="mood-emoji">🙂</span>Okay</button>
+    </div>
+    <textarea class="mood-input" id="moodText" placeholder="Tell us more about how you're feeling... (optional)"></textarea>
+    <button class="submit-btn btn-purple" onclick="submitMood()">Get Support &rarr;</button>
+  </div>
+
+  <!-- RESPONSE AREA -->
+  <div id="response-area">
+    <div class="response-card" id="response-card">
+      <p id="response-text"></p>
+    </div>
+    <div class="crisis-card" id="crisis-card" style="display:none">
+      <h3>🆘 We're here for you</h3>
+      <p>You don't have to face this alone. Please reach out to a crisis helpline right now:</p>
+      <div class="helpline-row">
+        <a href="tel:9152987821" class="helpline-link">iCall (TISS) <span>9152987821</span></a>
+        <a href="tel:18602662345" class="helpline-link">Vandrevala Foundation <span>1860-2662-345</span></a>
+        <a href="tel:14416" class="helpline-link">Snehi Helpline <span>044-24640050</span></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- BREATHING EXERCISE MODULE -->
+  <div class="section-card breathing-section">
+    <div class="section-label">4-7-8 Breathing Exercise</div>
+    <div class="breath-instruction">This technique calms your nervous system in under 2 minutes.</div>
+    <div class="breath-steps">
+      <div class="breath-step"><div class="step-num">4s</div><div class="step-lbl">Inhale</div></div>
+      <div class="breath-step"><div class="step-num">7s</div><div class="step-lbl">Hold</div></div>
+      <div class="breath-step"><div class="step-num">8s</div><div class="step-lbl">Exhale</div></div>
+    </div>
+    <div class="breath-circle-wrap">
+      <div class="breath-circle" id="breathCircle" onclick="startBreathing()">
+        <div class="breath-count" id="breathCount">▶</div>
+        <div class="breath-label" id="breathLabel">Tap to Start</div>
+      </div>
+    </div>
+    <div id="breath-status"></div>
+    <button class="submit-btn btn-green" id="doneBtn" style="display:none" onclick="logBreathing()">
+      Mark as Complete ✓
+    </button>
+    <div id="done-msg">🎉 Well done! Your breathing session has been logged.</div>
+  </div>
+</div>
+
+<div style="height:80px"></div>
+<nav class="bottom-nav">
+  <a href="/home" class="nav-item"><span class="nav-icon">🏠</span>Home</a>
+  <a href="/symptom-checker" class="nav-item"><span class="nav-icon">🩺</span>Symptoms</a>
+  <a href="/wellness" class="nav-item active"><span class="nav-icon">🧠</span>Wellness</a>
+  <a href="/hospitals" class="nav-item"><span class="nav-icon">🏥</span>Hospitals</a>
+</nav>
+
+<script>
+    
+var selectedMood = "";
+
+function selectMood(el, mood) {
+  document.querySelectorAll(".mood-btn").forEach(b => b.classList.remove("active"));
+  el.classList.add("active");
+  selectedMood = mood;
+  document.getElementById("moodText").value = mood === "okay" ? "" : mood + " - ";
+  document.getElementById("moodText").focus();
+}
+
+async function submitMood() {
+  var text = document.getElementById("moodText").value.trim() || selectedMood || "feeling unwell";
+  var area = document.getElementById("response-area");
+  var card = document.getElementById("response-card");
+  var crisis = document.getElementById("crisis-card");
+
+  area.style.display = "block";
+  document.getElementById("response-text").textContent = "Thinking...";
+  crisis.style.display = "none";
+
+  try {
+    var res = await fetch("/api/empathetic-response", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({mood_text: text})
+    });
+    var data = await res.json();
+    document.getElementById("response-text").textContent = data.response;
+    if (data.is_crisis) { crisis.style.display = "block"; }
+    area.scrollIntoView({behavior:"smooth", block:"start"});
+  } catch(e) {
+    document.getElementById("response-text").textContent = "Something went wrong. Please try again.";
+  }
+}
+
+// ── Breathing Exercise ───────────────────────────────────────────────────────
+var breathTimer = null;
+var breathRunning = false;
+var breathCycles = 0;
+var maxCycles = 3;
+
+function startBreathing() {
+  if (breathRunning) return;
+  breathRunning = true;
+  breathCycles = 0;
+  document.getElementById("doneBtn").style.display = "none";
+  runCycle();
+}
+
+function runCycle() {
+  if (breathCycles >= maxCycles) {
+    setBreath("▶", "Done!", "none", "");
+    document.getElementById("breath-status").textContent = "All 3 cycles complete! Great job.";
+    document.getElementById("doneBtn").style.display = "block";
+    breathRunning = false;
+    return;
+  }
+  breathCycles++;
+  document.getElementById("breath-status").textContent = "Cycle " + breathCycles + " of " + maxCycles;
+  phaseInhale();
+}
+
+function phaseInhale() {
+  setBreath("4", "Inhale", "inhale", "Breathe in slowly through your nose...");
+  countdown(4, function() { phaseHold(); });
+}
+
+function phaseHold() {
+  setBreath("7", "Hold", "hold", "Hold your breath gently...");
+  countdown(7, function() { phaseExhale(); });
+}
+
+function phaseExhale() {
+  setBreath("8", "Exhale", "exhale", "Breathe out slowly through your mouth...");
+  countdown(8, function() { runCycle(); });
+}
+
+var countdownTimer = null;
+function countdown(sec, cb) {
+  var s = sec;
+  document.getElementById("breathCount").textContent = s;
+  countdownTimer = setInterval(function() {
+    s--;
+    document.getElementById("breathCount").textContent = s;
+    if (s <= 0) { clearInterval(countdownTimer); cb(); }
+  }, 1000);
+}
+
+function setBreath(count, label, animClass, status) {
+  var c = document.getElementById("breathCircle");
+  c.className = "breath-circle" + (animClass ? " " + animClass : "");
+  document.getElementById("breathCount").textContent = count;
+  document.getElementById("breathLabel").textContent = label;
+  if (status) document.getElementById("breath-status").textContent = status;
+}
+
+async function logBreathing() {
+  try {
+    await fetch("/api/log-breathing", {method:"POST", headers:{"Content-Type":"application/json"}, body:"{}"});
+  } catch(e) {}
+  document.getElementById("doneBtn").style.display = "none";
+  document.getElementById("done-msg").style.display = "block";
+}
+    
+  </script>
+</body>
+</html>

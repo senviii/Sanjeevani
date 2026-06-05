@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanjeevani – Symptom Checker</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #1a6b4a; --green-light: #2d9b6f;
+    --cream: #fdf8f0; --red: #d63031;
+    --text: #1a1a2e; --muted: #6b7280;
+    --orange: #e67e22; --yellow: #f39c12;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); min-height: 100vh; }
+
+  header {
+    background: white;
+    padding: 1.2rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .back { font-size: 1.3rem; text-decoration: none; color: var(--text); }
+  .logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--green); }
+
+  .main { padding: 1.5rem; max-width: 480px; margin: 0 auto; }
+
+  .page-title { font-size: 1.5rem; font-weight: 500; color: var(--text); margin-bottom: 0.3rem; }
+  .subtitle    { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+
+  /* Quick symptom chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.2rem; }
+  .chip {
+    padding: 0.4rem 0.9rem;
+    border-radius: 50px;
+    background: white;
+    border: 1.5px solid #e5e7eb;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+  }
+  .chip:hover, .chip.active {
+    background: var(--green); color: white; border-color: var(--green);
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 1rem;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 14px;
+    font-size: 0.9rem;
+    font-family: 'DM Sans', sans-serif;
+    resize: vertical;
+    outline: none;
+    background: white;
+    color: var(--text);
+    transition: border 0.2s;
+    margin-bottom: 0.5rem;
+  }
+  textarea:focus { border-color: var(--green); }
+
+  .hint { font-size: 0.75rem; color: var(--muted); margin-bottom: 1.2rem; }
+
+  .analyze-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--green), var(--green-light));
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 6px 20px rgba(26,107,74,0.3);
+  }
+  .analyze-btn:hover { transform: translateY(-2px); }
+  .analyze-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  /* Result card */
+  #result { margin-top: 1.5rem; display: none; }
+
+  .result-card {
+    background: white;
+    border-radius: 18px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    animation: slideIn 0.4s ease;
+  }
+  @keyframes slideIn {
+    from { opacity:0; transform:translateY(20px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  .result-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; }
+  .result-icon { font-size: 2rem; }
+  .result-title { font-size: 1.1rem; font-weight: 500; }
+  .result-sub   { font-size: 0.8rem; color: var(--muted); }
+
+  .badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 50px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    margin-bottom: 0.8rem;
+  }
+  .badge-green  { background: #d1fae5; color: #065f46; }
+  .badge-yellow { background: #fef3c7; color: #92400e; }
+  .badge-orange { background: #ffedd5; color: #9a3412; }
+  .badge-red    { background: #fee2e2; color: #991b1b; }
+
+  .info-row { display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 0; border-bottom: 1px solid #f3f4f6; }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { font-size: 0.82rem; color: var(--muted); }
+  .info-val   { font-size: 0.9rem; font-weight: 500; color: var(--text); }
+
+  /* Emergency alert overlay */
+  .emergency-alert {
+    background: linear-gradient(135deg, #d63031, #c0392b);
+    color: white;
+    border-radius: 18px;
+    padding: 1.5rem;
+    text-align: center;
+    animation: slideIn 0.4s ease, shake 0.5s 0.4s ease;
+  }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-8px)}
+    75%{transform:translateX(8px)}
+  }
+  .emergency-alert h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+  .emergency-alert p  { font-size: 0.9rem; opacity: 0.9; margin-bottom: 1.2rem; }
+  .call-btn {
+    display: block;
+    background: white;
+    color: var(--red);
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.9rem;
+    border-radius: 12px;
+    text-decoration: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .loading { text-align: center; padding: 1rem; color: var(--muted); font-size: 0.9rem; }
+  .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #e5e7eb; border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 0.5rem; vertical-align: middle; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+</style>
+</head>
+<body>
+  <header>
+    <a href="/home" class="back">←</a>
+    <div class="logo">Symptom Checker</div>
+  </header>
+
+  <div class="main">
+    <div class="page-title">How are you feeling? 🩺</div>
+    <div class="subtitle">Describe your symptoms and we'll help you find the right care.</div>
+
+    <!-- Quick chips for common symptoms -->
+    <div class="chips" id="chips">
+      <button class="chip" onclick="addChip(this, 'chest pain')">Chest pain</button>
+      <button class="chip" onclick="addChip(this, 'headache')">Headache</button>
+      <button class="chip" onclick="addChip(this, 'fever')">Fever</button>
+      <button class="chip" onclick="addChip(this, 'cough')">Cough</button>
+      <button class="chip" onclick="addChip(this, 'stomach pain')">Stomach pain</button>
+      <button class="chip" onclick="addChip(this, 'joint pain')">Joint pain</button>
+      <button class="chip" onclick="addChip(this, 'rash')">Skin rash</button>
+      <button class="chip" onclick="addChip(this, 'breathless')">Breathlessness</button>
+      <button class="chip" onclick="addChip(this, 'severe bleeding')">Severe bleeding</button>
+    </div>
+
+    <textarea id="symptomInput" placeholder="e.g. I have severe chest pain and difficulty breathing since morning..."></textarea>
+    <div class="hint">💡 Tip: Be specific — mention duration, severity (mild/moderate/severe), and location of pain.</div>
+
+    <button class="analyze-btn" onclick="analyzeSymptoms()" id="analyzeBtn">
+      Analyze Symptoms →
+    </button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function addChip(el, text) {
+      el.classList.toggle('active');
+      const ta = document.getElementById('symptomInput');
+      const existing = ta.value.trim();
+      if (el.classList.contains('active')) {
+        ta.value = existing ? existing + ', ' + text : text;
+      } else {
+        ta.value = ta.value.replace(', ' + text, '').replace(text + ', ', '').replace(text, '').trim();
+      }
+    }
+
+    async function analyzeSymptoms() {
+      const symptoms = document.getElementById('symptomInput').value.trim();
+      if (!symptoms) { alert('Please describe your symptoms first.'); return; }
+
+      const btn = document.getElementById('analyzeBtn');
+      const resultDiv = document.getElementById('result');
+      btn.disabled = true;
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<div class="loading"><span class="spinner"></span> Analyzing your symptoms...</div>';
+
+      try {
+        const res = await fetch('/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ symptoms })
+        });
+        const data = await res.json();
+        renderResult(data);
+      } catch(e) {
+        resultDiv.innerHTML = '<div class="result-card"><p>Something went wrong. Please try again.</p></div>';
+      }
+      btn.disabled = false;
+    }
+
+    function renderResult(data) {
+      const resultDiv = document.getElementById('result');
+
+      if (data.is_emergency) {
+        resultDiv.innerHTML = `
+          <div class="emergency-alert">
+            <h2>🚨 EMERGENCY DETECTED</h2>
+            <p>Your symptoms indicate a critical condition requiring immediate medical attention.</p>
+            <a href="tel:108" class="call-btn">📞 Call 108 — Ambulance</a>
+          </div>`;
+        return;
+      }
+
+      const urgencyConfig = {
+        'HIGH':   { badge: 'badge-orange', label: '⚠️ High Urgency', icon: '⚠️' },
+        'MEDIUM': { badge: 'badge-yellow', label: '🔶 Moderate',     icon: '🔶' },
+        'LOW':    { badge: 'badge-green',  label: '✅ Low Urgency',  icon: '✅' },
+      };
+      const cfg = urgencyConfig[data.urgency] || urgencyConfig['LOW'];
+
+      resultDiv.innerHTML = `
+        <div class="result-card">
+          <div class="result-header">
+            <div class="result-icon">🏥</div>
+            <div>
+              <div class="result-title">Analysis Complete</div>
+              <div class="result-sub">Based on your described symptoms</div>
+            </div>
+          </div>
+          <span class="badge ${cfg.badge}">${cfg.label}</span>
+          <div class="info-row">
+            <span class="info-label">Recommended Specialty</span>
+            <span class="info-val">🩺 ${data.specialty}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Urgency Level</span>
+            <span class="info-val">${data.urgency}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Next Step</span>
+            <span class="info-val">Book appointment with ${data.specialty}</span>
+          </div>
+        </div>`;
+    }
+  </script>
+</body>
+</html>

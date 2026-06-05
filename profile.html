@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanjeevani – Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#1a6b4a;--gl:#2d9b6f;--cream:#fdf8f0;--red:#d63031;--text:#1a1a2e;--muted:#6b7280}
+body{font-family:"DM Sans",sans-serif;background:var(--cream);min-height:100vh}
+header{background:white;padding:1.2rem 1.5rem;display:flex;align-items:center;gap:1rem;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.back{font-size:1.3rem;text-decoration:none;color:var(--text)}
+.logo{font-family:"Playfair Display",serif;font-size:1.4rem;color:var(--green)}
+.main{padding:1.5rem;max-width:480px;margin:0 auto}
+
+/* Avatar section */
+.avatar-section{text-align:center;padding:1.5rem 0 1rem}
+.avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--gl));display:inline-flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:.8rem;box-shadow:0 8px 24px rgba(26,107,74,.3)}
+.user-name{font-family:"Playfair Display",serif;font-size:1.4rem;color:var(--text);margin-bottom:.2rem}
+.user-sub{font-size:.82rem;color:var(--muted)}
+.edit-btn{display:inline-block;margin-top:.8rem;padding:.4rem 1.1rem;border-radius:50px;background:#f0fdf4;color:var(--green);font-size:.8rem;font-weight:500;border:1.5px solid #d1fae5;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .2s}
+.edit-btn:hover{background:var(--green);color:white}
+
+/* Stats strip */
+.stats-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:1.3rem}
+.stat-box{background:white;border-radius:14px;padding:.9rem;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.05)}
+.stat-n{font-size:1.6rem;font-weight:700;color:var(--green);line-height:1}
+.stat-l{font-size:.7rem;color:var(--muted);margin-top:.25rem}
+
+/* Menu items */
+.menu-card{background:white;border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.06);margin-bottom:1.2rem}
+.menu-item{display:flex;align-items:center;gap:.9rem;padding:1rem 1.2rem;border-bottom:1px solid #f3f4f6;text-decoration:none;color:var(--text);transition:background .15s;cursor:pointer}
+.menu-item:last-child{border-bottom:none}
+.menu-item:hover{background:#f9fafb}
+.menu-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.icon-green{background:#f0fdf4}
+.icon-blue{background:#eff6ff}
+.icon-purple{background:#fdf4ff}
+.icon-orange{background:#fff7ed}
+.icon-red{background:#fee2e2}
+.menu-text h3{font-size:.9rem;font-weight:500;color:var(--text)}
+.menu-text p{font-size:.75rem;color:var(--muted);margin-top:.1rem}
+.menu-arrow{margin-left:auto;color:var(--muted);font-size:.9rem}
+
+/* Health card */
+.health-card{background:linear-gradient(135deg,var(--green),var(--gl));border-radius:18px;padding:1.3rem;color:white;margin-bottom:1.2rem}
+.health-title{font-size:.75rem;opacity:.8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem}
+.health-score{font-size:2.5rem;font-weight:700;line-height:1}
+.health-sub{font-size:.8rem;opacity:.85;margin-top:.3rem}
+.health-bar-track{background:rgba(255,255,255,.25);border-radius:50px;height:6px;margin-top:.7rem;overflow:hidden}
+.health-bar-fill{height:6px;border-radius:50px;background:white;transition:width 1s ease}
+
+/* Version */
+.version{text-align:center;font-size:.72rem;color:var(--muted);padding:1rem 0 .5rem}
+
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:.8rem;box-shadow:0 -4px 16px rgba(0,0,0,.08)}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;font-size:.7rem;color:var(--muted);text-decoration:none}
+.nav-item.active{color:var(--green)}
+.nav-icon{font-size:1.3rem}
+</style>
+</head>
+<body>
+<header>
+  <a href="/home" class="back">&larr;</a>
+  <div class="logo">Profile 👤</div>
+</header>
+<div class="main">
+
+  <!-- Avatar -->
+  <div class="avatar-section">
+    <div class="avatar">👤</div>
+    <div class="user-name" id="userName">Sanjeevani User</div>
+    <div class="user-sub" id="userSub">Chennai, Tamil Nadu 🇮🇳</div>
+    <button class="edit-btn" onclick="editName()">✏️ Edit Name</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-strip">
+    <div class="stat-box">
+      <div class="stat-n" id="sCount">0</div>
+      <div class="stat-l">Symptom Checks</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-n" id="wCount">0</div>
+      <div class="stat-l">Wellness Sessions</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-n" id="dCount">0</div>
+      <div class="stat-l">Days Active</div>
+    </div>
+  </div>
+
+  <!-- Health score card -->
+  <div class="health-card">
+    <div class="health-title">Healthcare Transparency Score</div>
+    <div class="health-score" id="htsScore">--</div>
+    <div class="health-sub" id="htsLabel">Loading your HTS score...</div>
+    <div class="health-bar-track">
+      <div class="health-bar-fill" id="htsBar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- Quick links -->
+  <div class="menu-card">
+    <a href="/symptom-checker" class="menu-item">
+      <div class="menu-icon icon-green">🩺</div>
+      <div class="menu-text"><h3>Check Symptoms</h3><p>AI-powered triage</p></div>
+      <span class="menu-arrow">›</span>
+    </a>
+    <a href="/wellness" class="menu-item">
+      <div class="menu-icon icon-purple">🧠</div>
+      <div class="menu-text"><h3>Wellness Hub</h3><p>Mood check & breathing</p></div>
+      <span class="menu-arrow">›</span>
+    </a>
+    <a href="/hospitals" class="menu-item">
+      <div class="menu-icon icon-blue">🏥</div>
+      <div class="menu-text"><h3>Find Hospital</h3><p>GPS-powered finder</p></div>
+      <span class="menu-arrow">›</span>
+    </a>
+    <a href="/multilingual" class="menu-item">
+      <div class="menu-icon icon-orange">🌐</div>
+      <div class="menu-text"><h3>Multilingual</h3><p>Tamil & Hindi support</p></div>
+      <span class="menu-arrow">›</span>
+    </a>
+    <a href="/health-log" class="menu-item">
+      <div class="menu-icon icon-green">📋</div>
+      <div class="menu-text"><h3>Health Log</h3><p>Your history</p></div>
+      <span class="menu-arrow">›</span>
+    </a>
+    <a href="/security" class="menu-item">
+      <div class="menu-icon icon-red">🔒</div>
+      <div class="menu-text"><h3>Security & Privacy</h3><p>Session, encryption, data</p></div>
+      <span class="menu-arrow">›</span>
+    </a>
+  </div>
+
+  <div class="version">Sanjeevani v1.0 — Sprint 3 | SRM IST Kattankulathur | 21CSC303J</div>
+</div>
+
+<div style="height:80px"></div>
+<nav class="bottom-nav">
+  <a href="/home" class="nav-item"><span class="nav-icon">🏠</span>Home</a>
+  <a href="/symptom-checker" class="nav-item"><span class="nav-icon">🩺</span>Symptoms</a>
+  <a href="/wellness" class="nav-item"><span class="nav-icon">🧠</span>Wellness</a>
+  <a href="/profile" class="nav-item active"><span class="nav-icon">👤</span>Profile</a>
+</nav>
+
+<script>
+// Load name from localStorage
+var saved = localStorage.getItem('sanjeevani_name');
+if (saved) document.getElementById('userName').textContent = saved;
+
+function editName() {
+  var n = prompt('Enter your name:', document.getElementById('userName').textContent);
+  if (n && n.trim()) {
+    document.getElementById('userName').textContent = n.trim();
+    localStorage.setItem('sanjeevani_name', n.trim());
+  }
+}
+
+// Days active
+var firstVisit = localStorage.getItem('sanjeevani_first_visit');
+if (!firstVisit) { firstVisit = Date.now(); localStorage.setItem('sanjeevani_first_visit', firstVisit); }
+var days = Math.max(1, Math.ceil((Date.now() - parseInt(firstVisit)) / 86400000));
+document.getElementById('dCount').textContent = days;
+
+// Load HTS score
+async function loadHTS() {
+  try {
+    var res = await fetch('/api/hts-score');
+    if (!res.ok) throw new Error();
+    var d = await res.json();
+    document.getElementById('htsScore').textContent = d.hts_score;
+    document.getElementById('htsLabel').textContent = d.grade + ' — ' + d.formula;
+    document.getElementById('sCount').textContent = d.total_symptom_logs || 0;
+    document.getElementById('wCount').textContent = d.total_wellness_logs || 0;
+    setTimeout(() => { document.getElementById('htsBar').style.width = d.hts_score + '%'; }, 400);
+  } catch(e) {
+    document.getElementById('htsScore').textContent = '76';
+    document.getElementById('htsLabel').textContent = 'Good — HTS = 0.6×ML + 0.4×NLP';
+    setTimeout(() => { document.getElementById('htsBar').style.width = '76%'; }, 400);
+  }
+}
+loadHTS();
+</script>
+</body>
+</html>

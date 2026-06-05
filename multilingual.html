@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanjeevani – Multilingual</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#1a6b4a;--gl:#2d9b6f;--cream:#fdf8f0;--red:#d63031;--text:#1a1a2e;--muted:#6b7280}
+body{font-family:"DM Sans",sans-serif;background:var(--cream);min-height:100vh}
+header{background:white;padding:1.2rem 1.5rem;display:flex;align-items:center;gap:1rem;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.back{font-size:1.3rem;text-decoration:none;color:var(--text)}
+.logo{font-family:"Playfair Display",serif;font-size:1.4rem;color:var(--green)}
+.main{padding:1.5rem;max-width:480px;margin:0 auto}
+.page-title{font-size:1.5rem;font-weight:500;color:var(--text);margin-bottom:.3rem}
+.subtitle{font-size:.85rem;color:var(--muted);margin-bottom:1.4rem}
+.lang-tabs{display:flex;gap:.4rem;margin-bottom:1.2rem;background:white;border-radius:14px;padding:.4rem;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.lang-tab{flex:1;padding:.6rem;border:none;border-radius:10px;font-size:.82rem;font-weight:500;font-family:"DM Sans",sans-serif;cursor:pointer;background:transparent;color:var(--muted);transition:all .2s;text-align:center}
+.lang-tab.active{background:var(--green);color:white;box-shadow:0 3px 10px rgba(26,107,74,.3)}
+.detect-strip{display:flex;align-items:center;gap:.6rem;background:white;border-radius:12px;padding:.8rem 1rem;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.detect-dot{width:10px;height:10px;border-radius:50%;background:#e5e7eb;flex-shrink:0;transition:background .3s}
+.detect-dot.on{background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,.6)}
+.detect-text{font-size:.82rem;color:var(--muted)}
+.detect-text b{color:var(--text)}
+.examples-wrap{background:white;border-radius:14px;padding:1rem 1.2rem;box-shadow:0 4px 14px rgba(0,0,0,.06);margin-bottom:1.1rem}
+.ex-label{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem}
+.ex-chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.ex-chip{padding:.35rem .75rem;border-radius:8px;font-size:.8rem;cursor:pointer;border:1.5px solid #d1fae5;background:#f0fdf4;color:var(--green);transition:all .2s;font-family:"DM Sans",sans-serif}
+.ex-chip:hover{background:var(--green);color:white;border-color:var(--green)}
+.translate-box{background:#eff6ff;border-radius:10px;padding:.8rem 1rem;margin-bottom:1rem;border-left:3px solid #2980b9;display:none}
+.translate-label{font-size:.7rem;font-weight:600;color:#1d4ed8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem}
+.translate-val{font-size:.85rem;color:#1e3a5f}
+textarea{width:100%;min-height:110px;padding:1rem;border:1.5px solid #e5e7eb;border-radius:14px;font-size:.95rem;font-family:"DM Sans",sans-serif;resize:none;outline:none;background:white;color:var(--text);transition:border .2s;margin-bottom:.5rem;line-height:1.6}
+textarea:focus{border-color:var(--green)}
+.hint{font-size:.75rem;color:var(--muted);margin-bottom:1.1rem}
+.analyze-btn{width:100%;padding:1rem;background:linear-gradient(135deg,var(--green),var(--gl));color:white;border:none;border-radius:14px;font-size:1rem;font-weight:500;font-family:"DM Sans",sans-serif;cursor:pointer;box-shadow:0 6px 20px rgba(26,107,74,.3);transition:transform .2s}
+.analyze-btn:hover{transform:translateY(-2px)}
+.analyze-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+#result{margin-top:1.3rem;display:none}
+.result-card{background:white;border-radius:18px;padding:1.5rem;box-shadow:0 8px 28px rgba(0,0,0,.1);animation:slideIn .4s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.result-top{display:flex;align-items:center;gap:.8rem;margin-bottom:1rem}
+.result-emoji{font-size:2rem}
+.result-title{font-size:1.1rem;font-weight:600;color:var(--text)}
+.result-lang{font-size:.78rem;color:var(--muted)}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:.65rem 0;border-bottom:1px solid #f3f4f6}
+.info-row:last-child{border-bottom:none}
+.info-label{font-size:.82rem;color:var(--muted)}
+.info-val{font-size:.88rem;font-weight:500;color:var(--text)}
+.badge{display:inline-block;padding:.25rem .7rem;border-radius:50px;font-size:.75rem;font-weight:600;margin-bottom:.7rem}
+.badge-low{background:#d1fae5;color:#065f46}
+.badge-medium{background:#fef3c7;color:#92400e}
+.badge-high{background:#ffedd5;color:#9a3412}
+.emergency-box{background:linear-gradient(135deg,var(--red),#c0392b);color:white;border-radius:16px;padding:1.4rem;text-align:center}
+.emergency-box h2{font-size:1.2rem;margin-bottom:.4rem}
+.emergency-box p{font-size:.85rem;opacity:.9;margin-bottom:1rem}
+.call-btn{display:block;background:white;color:var(--red);font-weight:700;font-size:1rem;padding:.8rem;border-radius:10px;text-decoration:none;font-family:"DM Sans",sans-serif}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:.8rem;box-shadow:0 -4px 16px rgba(0,0,0,.08)}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;font-size:.7rem;color:var(--muted);text-decoration:none}
+.nav-item.active{color:var(--green)}
+.nav-icon{font-size:1.3rem}
+</style>
+</head>
+<body>
+<header>
+  <a href="/home" class="back">&larr;</a>
+  <div class="logo">Multilingual Checker 🌐</div>
+</header>
+<div class="main">
+  <div class="page-title">Describe in your language 🌐</div>
+  <div class="subtitle">Supports English, Tamil and Hindi. Translation happens instantly.</div>
+  <div class="lang-tabs">
+    <button class="lang-tab active" onclick="setLang('en',this)">English</button>
+    <button class="lang-tab" onclick="setLang('ta',this)">தமிழ்</button>
+    <button class="lang-tab" onclick="setLang('hi',this)">हिंदी</button>
+  </div>
+  <div class="detect-strip">
+    <div class="detect-dot on" id="dot"></div>
+    <div class="detect-text" id="detectLabel"><b>English selected</b> — type symptoms below</div>
+  </div>
+  <div class="examples-wrap">
+    <div class="ex-label">Tap an example to use it</div>
+    <div class="ex-chips" id="chips"></div>
+  </div>
+  <div class="translate-box" id="transBox">
+    <div class="translate-label">Translated to English</div>
+    <div class="translate-val" id="transVal"></div>
+  </div>
+  <textarea id="inp" placeholder="Type symptoms in English..."></textarea>
+  <div class="hint" id="hintEl">Type your symptoms and press Analyze.</div>
+  <button class="analyze-btn" id="btn" onclick="go()">Analyze Symptoms →</button>
+  <div id="result"></div>
+</div>
+<div style="height:80px"></div>
+<nav class="bottom-nav">
+  <a href="/home" class="nav-item"><span class="nav-icon">🏠</span>Home</a>
+  <a href="/symptom-checker" class="nav-item"><span class="nav-icon">🩺</span>Symptoms</a>
+  <a href="/multilingual" class="nav-item active"><span class="nav-icon">🌐</span>Multi</a>
+  <a href="/security" class="nav-item"><span class="nav-icon">🔒</span>Security</a>
+</nav>
+<script>
+var TM={"மார்பு வலி":"chest pain","தலைவலி":"headache","காய்ச்சல்":"fever","இருமல்":"cough","மூச்சுத்திணறல்":"breathless","வயிற்றுவலி":"stomach pain","மயக்கம்":"unconscious","வாந்தி":"vomit","தலைசுற்றல்":"dizzy","கை வலி":"arm pain","கால் வலி":"leg pain","கண் வலி":"eye pain","தொண்டை வலி":"throat pain","முதுகுவலி":"back pain","இரத்தப்போக்கு":"severe bleeding","இதய படபடப்பு":"palpitation","தோல் தடிப்பு":"rash","மூட்டு வலி":"joint pain","எலும்பு வலி":"bone pain","நெஞ்சு வலி":"chest pain"};
+var HM={"सीने में दर्द":"chest pain","सिरदर्द":"headache","बुखार":"fever","खांसी":"cough","सांस लेने में तकलीफ":"breathless","पेट दर्द":"stomach pain","बेहोशी":"unconscious","उल्टी":"vomit","चक्कर":"dizzy","हाथ दर्द":"arm pain","पैर दर्द":"leg pain","आँख दर्द":"eye pain","गले में दर्द":"throat pain","कमर दर्द":"back pain","खून बहना":"severe bleeding","दिल की धड़कन":"palpitation","त्वचा पर दाने":"rash","जोड़ों का दर्द":"joint pain","हड्डी का दर्द":"bone pain","छाती में दर्द":"chest pain"};
+var EX={en:["I have chest pain","severe headache and fever","mild cough and breathless","stomach pain and vomiting","joint pain in my knees"],ta:["மார்பு வலி","தலைவலி மற்றும் காய்ச்சல்","இருமல் மற்றும் மூச்சுத்திணறல்","வயிற்றுவலி மற்றும் வாந்தி","மூட்டு வலி"],hi:["सीने में दर्द","सिरदर्द और बुखार","खांसी और सांस में तकलीफ","पेट दर्द और उल्टी","जोड़ों का दर्द"]};
+var LABELS={en:"<b>English selected</b> — type symptoms below",ta:"<b>Tamil (தமிழ்) selected</b> — type below, auto-translated",hi:"<b>Hindi (हिंदी) selected</b> — type below, auto-translated"};
+var HINTS={en:"Type your symptoms in English and press Analyze.",ta:"தமிழில் அறிகுறிகளை தட்டச்சு செய்யுங்கள். தானாக மொழிபெயர்க்கப்படும்.",hi:"हिंदी में लक्षण लिखें। अपने आप अनुवाद होगा।"};
+var PLACEHOLDERS={en:"Type symptoms in English...",ta:"உங்கள் அறிகுறிகளை இங்கே தட்டச்சு செய்யுங்கள்...",hi:"अपने लक्षण यहाँ लिखें..."};
+var SM={"chest pain":"Cardiology","heart attack":"Cardiology","palpitation":"Cardiology","breathless":"Pulmonology","cough":"Pulmonology","headache":"Neurology","migraine":"Neurology","dizzy":"Neurology","fever":"General Medicine","cold":"General Medicine","fatigue":"General Medicine","rash":"Dermatology","stomach":"Gastroenterology","vomit":"Gastroenterology","diarrhea":"Gastroenterology","bone":"Orthopedics","fracture":"Orthopedics","joint":"Orthopedics","arm pain":"Orthopedics","leg pain":"Orthopedics","back pain":"Orthopedics","eye":"Ophthalmology","throat":"ENT","ear":"ENT","bleeding":"Emergency"};
+var EKW=["chest pain","heart attack","stroke","unconscious","not breathing","severe bleeding","seizure","difficulty breathing","collapsed","choking","anaphylaxis","overdose"];
+var lang="en";
+
+function setLang(l,el){
+  lang=l;
+  document.querySelectorAll(".lang-tab").forEach(t=>t.classList.remove("active"));
+  el.classList.add("active");
+  document.getElementById("detectLabel").innerHTML=LABELS[l];
+  document.getElementById("hintEl").textContent=HINTS[l];
+  document.getElementById("inp").placeholder=PLACEHOLDERS[l];
+  document.getElementById("inp").value="";
+  document.getElementById("result").style.display="none";
+  document.getElementById("transBox").style.display="none";
+  var chips=document.getElementById("chips");
+  chips.innerHTML=EX[l].map(e=>'<button class="ex-chip" onclick="useEx(\''+e.replace(/'/g,"\\'")+'\')">' + e + "</button>").join("");
+}
+
+function useEx(t){
+  document.getElementById("inp").value=t;
+  if(lang!="en") showTrans(t);
+  else document.getElementById("transBox").style.display="none";
+}
+
+function translate(raw){
+  var map=lang=="ta"?TM:HM;
+  var out=raw;
+  Object.keys(map).forEach(k=>{out=out.split(k).join(map[k]);});
+  return out;
+}
+
+function showTrans(raw){
+  var tr=translate(raw);
+  if(tr!==raw){
+    document.getElementById("transVal").textContent='"'+tr+'"';
+    document.getElementById("transBox").style.display="block";
+  } else {
+    document.getElementById("transBox").style.display="none";
+  }
+}
+
+document.getElementById("inp").addEventListener("input",function(){
+  if(lang!=="en") showTrans(this.value.trim());
+  else document.getElementById("transBox").style.display="none";
+});
+
+function spec(t){var lo=t.toLowerCase();for(var k in SM){if(lo.includes(k))return SM[k];}return "General Medicine";}
+function urg(t){var lo=t.toLowerCase();for(var k of EKW){if(lo.includes(k))return{u:"EMERGENCY",e:true};}if(/severe|acute|extreme|unbearable|sudden|critical/.test(lo))return{u:"HIGH",e:false};if(/moderate|persistent|recurring|worsening/.test(lo))return{u:"MEDIUM",e:false};return{u:"LOW",e:false};}
+
+async function go(){
+  var raw=document.getElementById("inp").value.trim();
+  if(!raw){alert("Please enter your symptoms first.");return;}
+  var btn=document.getElementById("btn");
+  btn.disabled=true;btn.textContent="Analyzing...";
+  var eng=lang!="en"?translate(raw):raw;
+  var sp=spec(eng);
+  var {u,e}=urg(eng);
+  var langName={en:"English",ta:"Tamil (தமிழ்)",hi:"Hindi (हिंदी)"}[lang];
+  try{
+    var res=await fetch("/api/multilingual-analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({symptoms:raw})});
+    if(res.ok){var d=await res.json();sp=d.specialty;u=d.urgency;e=d.is_emergency;}
+  }catch(err){}
+  render({sp,u,e,lang:langName,trans:eng!==raw?eng:null});
+  btn.disabled=false;btn.textContent="Analyze Symptoms →";
+}
+
+function render(d){
+  var div=document.getElementById("result");div.style.display="block";
+  if(d.e){div.innerHTML='<div class="emergency-box"><h2>🚨 EMERGENCY DETECTED</h2><p>Seek immediate medical help.</p><a href="tel:108" class="call-btn">📞 Call 108 — Ambulance</a></div>';return;}
+  var bc={HIGH:"badge-high",MEDIUM:"badge-medium",LOW:"badge-low"};
+  var bl={HIGH:"⚠️ High Urgency",MEDIUM:"🔶 Moderate",LOW:"✅ Low Urgency"};
+  div.innerHTML='<div class="result-card"><div class="result-top"><div class="result-emoji">🏥</div><div><div class="result-title">Analysis Complete</div><div class="result-lang">Language: '+d.lang+'</div></div></div><span class="badge '+bc[d.u]+'">'+bl[d.u]+'</span>'+(d.trans?'<div style="background:#eff6ff;border-radius:8px;padding:.6rem;font-size:.8rem;color:#1d4ed8;margin-bottom:.7rem">🔄 Translated: "'+d.trans+'"</div>':'')+'<div class="info-row"><span class="info-label">Specialty</span><span class="info-val">🩺 '+d.sp+'</span></div><div class="info-row"><span class="info-label">Urgency</span><span class="info-val">'+d.u+'</span></div><div class="info-row"><span class="info-label">Language</span><span class="info-val">🌐 '+d.lang+'</span></div></div>';
+  div.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+setLang("en",document.querySelector(".lang-tab.active"));
+</script>
+</body>
+</html>

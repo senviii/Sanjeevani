@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanjeevani</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#1a6b4a;--green-light:#2d9b6f;--cream:#fdf8f0;--red:#d63031;--text:#1a1a2e;--muted:#6b7280}
+body{font-family:"DM Sans",sans-serif;background:var(--cream);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.bg-circle{position:fixed;border-radius:50%;opacity:.07;background:var(--green);animation:pulse 6s ease-in-out infinite}
+.bg-circle:nth-child(1){width:600px;height:600px;top:-200px;right:-200px}
+.bg-circle:nth-child(2){width:400px;height:400px;bottom:-150px;left:-100px;animation-delay:2s}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.container{position:relative;z-index:1;text-align:center;padding:2rem;max-width:480px;animation:fadeUp .8s ease forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.logo{font-family:"Playfair Display",serif;font-size:3.2rem;color:var(--green);letter-spacing:-1px;margin-bottom:.3rem}
+.logo span{color:var(--red)}
+.tagline{font-size:1rem;color:var(--muted);margin-bottom:3rem;font-weight:300;letter-spacing:.05em}
+.onboard-card{background:white;border-radius:24px;padding:2.5rem 2rem;box-shadow:0 20px 60px rgba(26,107,74,.12);margin-bottom:2rem}
+.step{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.5rem;text-align:left;opacity:0;animation:fadeUp .6s ease forwards}
+.step:nth-child(1){animation-delay:.3s}.step:nth-child(2){animation-delay:.5s}.step:nth-child(3){animation-delay:.7s}
+.step-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--green),var(--green-light));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.step-text h3{font-size:.95rem;font-weight:500;color:var(--text);margin-bottom:.2rem}
+.step-text p{font-size:.82rem;color:var(--muted);line-height:1.5}
+.btn-primary{display:block;width:100%;padding:1rem;background:linear-gradient(135deg,var(--green),var(--green-light));color:white;border:none;border-radius:14px;font-size:1rem;font-weight:500;font-family:"DM Sans",sans-serif;cursor:pointer;text-decoration:none;transition:transform .2s,box-shadow .2s;box-shadow:0 6px 20px rgba(26,107,74,.3);animation:fadeUp .6s .9s ease forwards;opacity:0}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(26,107,74,.4)}
+.disclaimer{font-size:.75rem;color:var(--muted);margin-top:1rem;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="bg-circle"></div><div class="bg-circle"></div>
+<div class="container">
+  <div class="logo">Sanje<span>e</span>vani</div>
+  <div class="tagline">Your intelligent health companion</div>
+  <div class="onboard-card">
+    <div class="step"><div class="step-icon">&#x1F9BA;</div><div class="step-text"><h3>Describe your symptoms</h3><p>Enter what you are experiencing and we will map it to the right specialist instantly.</p></div></div>
+    <div class="step"><div class="step-icon">&#x26A1;</div><div class="step-text"><h3>Urgency detection</h3><p>Our system automatically detects critical symptoms and escalates emergencies.</p></div></div>
+    <div class="step"><div class="step-icon">&#x1F6A8;</div><div class="step-text"><h3>Emergency support</h3><p>One-tap emergency button connects you to ambulance services instantly.</p></div></div>
+  </div>
+  <a href="/home" class="btn-primary">Get Started &rarr;</a>
+  <p class="disclaimer">Sanjeevani is an AI-assisted triage tool and does not replace professional medical advice.</p>
+</div>
+</body>
+</html>
