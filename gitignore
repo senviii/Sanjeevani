@@ -1,0 +1,37 @@
+# Database
+*.db
+*.sqlite3
+
+# Secret keys
+secret.key
+.env
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.hintrc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
