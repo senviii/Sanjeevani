@@ -1,7 +1,6 @@
 # Sanjeevani 🌿
 ### A Transparent, Multilingual AI Health Transparency Platform
 
-> Accepted at **CEECT 2026** (IEEE Conference on Emerging Engineering and Computing Technologies)
 
 Sanjeevani is a Flask-based healthcare web application that prioritizes **explainability and user trust** in AI-driven health tools. It combines NLP-powered symptom checking, multilingual support, and encrypted health record management — with full transparency into how AI decisions are made.
 
